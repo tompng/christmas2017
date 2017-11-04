@@ -5,7 +5,7 @@ function f(p){
     y: 1.8*p.x*p.x+0.65*p.y*p.y
   }
 }
-function star(x,y,n,l){
+function star(x,y,n){
   return 80*(x*x+y*y)*Math.cos(5/6*Math.asin(Math.sin(n*Math.atan2(x,-y))))-1
 }
 function christmastree(x,y){
