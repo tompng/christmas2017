@@ -1,25 +1,12 @@
 <script src='christmastree.js'></script>
+<script src='plot.js'></script>
 <script>
-function render(){
-  canvas=document.createElement('canvas')
-  size=1024
-  canvas.width=canvas.height=size
-  canvas.style.width=canvas.style.height=800
-  g=canvas.getContext('2d')
-  document.body.appendChild(canvas)
-  g.clearRect(0,0,size,size)
-  function calc1x(x,y){return christmastree(x,y)}
-  function calc2x(x,y){
-    return (calc1x(x-0.5/size,y-0.5/size)+calc1x(x-0.5/size,y+0.5/size)+calc1x(x+0.5/size,y-0.5/size)+calc1x(x+0.5/size,y+0.5/size))/4
-  }
-  for(i=0;i<size;i++){
-    for(j=0;j<size;j++){
-      x=2*(i+0.5)/size-1
-      y=1-2*(j+0.5)/size+0.95
-      g.globalAlpha=calc2x(x,y)
-      g.fillRect(i,j,1,1)
+var option = { x: [-1,+1], y: [-1,+2], size: 512, quality: 2 }
+render(option, function(plot, dx, dy){
+  for(x=-1;x<+1;x+=dx){
+    for(y=-1;y<+2;y+=dy){
+      if(christmastree(x,y))plot(x,y)
     }
   }
-}
-onload=render
+})
 </script>
