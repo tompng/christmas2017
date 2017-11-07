@@ -103,3 +103,4 @@ int main(){
   }
   return 0;
 }
+//ffmpeg -i out/%d.bmp -s 400x400 -vf format=yuv420p out.mp4
