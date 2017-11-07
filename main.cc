@@ -4,7 +4,7 @@
 #define Y0 -1
 #define Z0 -0.2
 #define XYZSIZE 2.0
-#define SIZE 2048
+#define SIZE 1024
 
 typedef struct{double x,y,z;} Point;
 Point f(Point p){
@@ -19,9 +19,16 @@ Point f(Point p){
     xy2*1.8+p.z*p.z*0.65
   };
 }
+int LEVEL=0;
+double PHASE=0;
+double THETA=0;
 double shape(double x,double y,double z){
   Point p={x,y,z};
-  p=f(f(f(f(f(f(p))))));
+  for(int i=0;i<LEVEL;i++)p=f(p);
+  Point q=f(p);
+  p.x = p.x*(1-PHASE)+PHASE*q.x;
+  p.y = p.y*(1-PHASE)+PHASE*q.y-0.5;
+  p.z = p.z*(1-PHASE)+PHASE*q.z;
   return p.x*p.x+p.y*p.y+p.z*p.z-1;
 }
 
@@ -30,6 +37,9 @@ int func(int ix,int iy,int iz){
   double x=X0+XYZSIZE*ix/SIZE;
   double y=Y0+XYZSIZE*iy/SIZE;
   double z=Z0+XYZSIZE*iz/SIZE;
+  double c=cos(THETA);
+  double s=sin(THETA);
+  double _x=x;x=c*_x-s*y;y=s*_x+c*y;
   return shape(x,y,z)<0;
 }
 Image *image=new Image(SIZE, SIZE);
@@ -72,9 +82,24 @@ void renderRange(int x, int y, int z, int size){
   }
 }
 
+void imgclear(){
+  for(int x=0;x<image->w;x++)for(int y=0;y<image->h;y++){
+    image->data[x][y].r=image->data[x][y].g=image->data[x][y].b=0;
+  }
+}
+
 int main(){
-  renderSubRange(0,0,0,SIZE);
-  FILE *fp=fopen("out.bmp","w");
-  image->save(fp);
+  for(int i=0;i<=30;i++){
+    imgclear();
+    LEVEL = i/5;
+    PHASE = i%5/5.0;
+    THETA=i*0.02;
+    renderSubRange(0,0,0,SIZE);
+    char name[1000];
+    sprintf(name, "out/%d.bmp", i);
+    FILE *fp=fopen(name,"w");
+    image->save(fp);
+    fclose(fp);
+  }
   return 0;
 }
